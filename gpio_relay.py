@@ -8,7 +8,7 @@ RELAY_PIN = int(os.getenv("RELAY_PIN", "17"))
 RELAY_ACTIVE_LOW = os.getenv("RELAY_ACTIVE_LOW", "true").lower() == "true"
 BUZZ_DURATION = float(os.getenv("BUZZ_DURATION", "3.0"))
 
-# GPIO state
+# GPIO state — initialised lazily via init()
 _chip = None
 _gpio_available = False
 
@@ -16,16 +16,20 @@ _gpio_available = False
 _ON  = 0 if RELAY_ACTIVE_LOW else 1   # active-low: ON = LOW
 _OFF = 1 if RELAY_ACTIVE_LOW else 0
 
-try:
-    import lgpio
-    _chip = lgpio.gpiochip_open(0)
-    lgpio.gpio_claim_output(_chip, RELAY_PIN, _OFF)   # start in OFF state
-    _gpio_available = True
-    logger.info("GPIO initialized — relay on BCM %d (active_%s)",
-                RELAY_PIN, "low" if RELAY_ACTIVE_LOW else "high")
-except Exception as e:
-    _gpio_available = False
-    logger.warning("GPIO not available — running in mock mode (%s)", e)
+
+def init():
+    """Call this after logging is configured (e.g. from FastAPI lifespan)."""
+    global _chip, _gpio_available
+    try:
+        import lgpio
+        _chip = lgpio.gpiochip_open(0)
+        lgpio.gpio_claim_output(_chip, RELAY_PIN, _OFF)   # start in OFF state
+        _gpio_available = True
+        logger.info("GPIO initialized — relay on BCM %d (active_%s)",
+                    RELAY_PIN, "low" if RELAY_ACTIVE_LOW else "high")
+    except Exception as e:
+        _gpio_available = False
+        logger.warning("GPIO not available — running in mock mode (%s)", e)
 
 
 async def buzz_door(duration: float = BUZZ_DURATION) -> bool:

@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await database.init_db()
+    gpio_relay.init()   # after logging.basicConfig — messages now visible
     logger.info("OpenDoor started — RP_ID=%s  origin=%s", os.environ["RP_ID"], os.environ["RP_ORIGIN"])
     yield
     gpio_relay.cleanup()
