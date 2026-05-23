@@ -5,4 +5,5 @@ aiosqlite==0.20.0
 python-dotenv==1.0.1
 itsdangerous==2.2.0
 starlette==0.41.3
-rpi-lgpio
+gpiozero
+lgpio
