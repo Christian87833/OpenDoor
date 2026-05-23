@@ -2,7 +2,7 @@
 # OpenDoor — Setup-Script für Raspberry Pi
 # Ausführen mit: bash install.sh
 
-set -euo pipefail
+set -eo pipefail
 cd "$(dirname "$0")"
 
 echo "=== OpenDoor Setup ==="
