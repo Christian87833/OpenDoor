@@ -11,6 +11,7 @@ BUZZ_DURATION = float(os.getenv("BUZZ_DURATION", "3.0"))
 # GPIO state — initialised lazily via init()
 _chip = None
 _gpio_available = False
+lgpio = None  # module reference, set in init()
 
 # Pin levels
 _ON  = 0 if RELAY_ACTIVE_LOW else 1   # active-low: ON = LOW
@@ -19,9 +20,10 @@ _OFF = 1 if RELAY_ACTIVE_LOW else 0
 
 def init():
     """Call this after logging is configured (e.g. from FastAPI lifespan)."""
-    global _chip, _gpio_available
+    global _chip, _gpio_available, lgpio
     try:
-        import lgpio
+        import lgpio as _lgpio
+        lgpio = _lgpio
         _chip = lgpio.gpiochip_open(0)
         lgpio.gpio_claim_output(_chip, RELAY_PIN, _OFF)   # start in OFF state
         _gpio_available = True
