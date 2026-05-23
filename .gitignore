@@ -1,0 +1,19 @@
+# Secrets — niemals ins Repo!
+.env
+
+# Datenbank
+*.db
+*.db-journal
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
